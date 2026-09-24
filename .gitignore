@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Environment variables (contains secrets — never commit)
+.env
+.env.local
+
+# Build outputs
+dist/
+build/
+
+# Editor/OS
+.vscode/
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
