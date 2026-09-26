@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { prisma } from "../lib/prisma";
 import { asyncHandler, ApiError } from "../middleware/errorHandler";
+import { authRateLimiter } from "../middleware/rateLimiter";
 
 const router = Router();
 
@@ -27,6 +28,7 @@ function signToken(userId: string) {
 // POST /api/auth/signup
 router.post(
   "/signup",
+  authRateLimiter,
   asyncHandler(async (req, res) => {
     const data = signupSchema.parse(req.body);
 
@@ -50,17 +52,18 @@ router.post(
 // POST /api/auth/login
 router.post(
   "/login",
+  authRateLimiter,
   asyncHandler(async (req, res) => {
     const data = loginSchema.parse(req.body);
 
     const user = await prisma.user.findUnique({ where: { email: data.email } });
     if (!user) {
-      throw new ApiError(401, "Invalid email or password");
+      throw new ApiError(404, "No account found with this email. Please sign up.");
     }
 
     const valid = await bcrypt.compare(data.password, user.passwordHash);
     if (!valid) {
-      throw new ApiError(401, "Invalid email or password");
+      throw new ApiError(401, "Incorrect password. Please try again.");
     }
 
     res.json({

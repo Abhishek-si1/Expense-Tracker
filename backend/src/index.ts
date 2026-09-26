@@ -12,6 +12,10 @@ import { requireAuth } from "./middleware/auth";
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// Render (and most hosts) sit behind a reverse proxy; trusting the first hop
+// lets express-rate-limit read the real client IP from X-Forwarded-For.
+app.set("trust proxy", 1);
+
 app.use(cors({ origin: process.env.CORS_ORIGIN || "http://localhost:5173" }));
 app.use(express.json());
 
