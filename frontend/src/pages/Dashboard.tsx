@@ -9,6 +9,8 @@ import CategoryPieChart from "../components/charts/CategoryPieChart";
 import MonthlyTrendChart from "../components/charts/MonthlyTrendChart";
 import BudgetProgress from "../components/charts/BudgetProgress";
 import type { AuthUser } from "../api/client";
+import ThemeToggle from "../components/ThemeToggle";
+import ChangePasswordForm from "../components/ChangePasswordForm";
 
 const now = new Date();
 
@@ -42,7 +44,7 @@ export default function Dashboard({ user, onLogout }: Props) {
   const [byCategory, setByCategory] = useState<CategoryTotal[]>([]);
   const [trend, setTrend] = useState<TrendPoint[]>([]);
   const [editing, setEditing] = useState<Transaction | null>(null);
-  const [tab, setTab] = useState<"transactions" | "categories" | "budgets">("transactions");
+  const [tab, setTab] = useState<"transactions" | "categories" | "budgets" | "settings">("transactions");
 
   // Transaction list filters
   const [filterCategory, setFilterCategory] = useState("");
@@ -121,7 +123,7 @@ export default function Dashboard({ user, onLogout }: Props) {
             <select
               value={month}
               onChange={(e) => setMonth(Number(e.target.value))}
-              className="flex-1 rounded-lg border border-ink-100 px-2 py-1.5 text-ink-700 sm:flex-none"
+              className="flex-1 rounded-lg border border-ink-100 bg-white px-2 py-1.5 text-ink-700 sm:flex-none"
             >
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                 <option key={m} value={m}>
@@ -132,7 +134,7 @@ export default function Dashboard({ user, onLogout }: Props) {
             <select
               value={year}
               onChange={(e) => setYear(Number(e.target.value))}
-              className="rounded-lg border border-ink-100 px-2 py-1.5 text-ink-700"
+              className="rounded-lg border border-ink-100 bg-white px-2 py-1.5 text-ink-700"
             >
               {[year - 1, year, year + 1].map((y) => (
                 <option key={y} value={y}>
@@ -142,6 +144,7 @@ export default function Dashboard({ user, onLogout }: Props) {
             </select>
             <span className="mx-1 hidden text-ink-400 sm:inline">|</span>
             <span className="hidden text-ink-600 sm:inline">{user?.email}</span>
+            <ThemeToggle />
             <button
               onClick={onLogout}
               className="rounded-lg border border-ink-100 px-2 py-1.5 text-ink-700 hover:bg-ink-50"
@@ -177,7 +180,7 @@ export default function Dashboard({ user, onLogout }: Props) {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <div className="rounded-card border border-ink-100 bg-white p-4 lg:col-span-2">
             <div className="mb-3 flex gap-4 overflow-x-auto border-b border-ink-100 text-sm font-medium text-ink-400">
-              {(["transactions", "categories", "budgets"] as const).map((t) => (
+              {(["transactions", "categories", "budgets", "settings"] as const).map((t) => (
                 <button
                   key={t}
                   onClick={() => setTab(t)}
@@ -205,12 +208,12 @@ export default function Dashboard({ user, onLogout }: Props) {
                     placeholder="Search title/notes..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="min-w-[160px] flex-1 rounded-lg border border-ink-100 px-2 py-1.5 text-sm text-ink-700"
+                    className="min-w-[160px] flex-1 rounded-lg border border-ink-100 bg-white px-2 py-1.5 text-sm text-ink-700"
                   />
                   <select
                     value={filterCategory}
                     onChange={(e) => setFilterCategory(e.target.value)}
-                    className="rounded-lg border border-ink-100 px-2 py-1.5 text-sm text-ink-700"
+                    className="rounded-lg border border-ink-100 bg-white px-2 py-1.5 text-sm text-ink-700"
                   >
                     <option value="">All categories</option>
                     {categories.map((c) => (
@@ -222,7 +225,7 @@ export default function Dashboard({ user, onLogout }: Props) {
                   <select
                     value={filterType}
                     onChange={(e) => setFilterType(e.target.value)}
-                    className="rounded-lg border border-ink-100 px-2 py-1.5 text-sm text-ink-700"
+                    className="rounded-lg border border-ink-100 bg-white px-2 py-1.5 text-sm text-ink-700"
                   >
                     <option value="">All types</option>
                     <option value="INCOME">Income</option>
@@ -231,7 +234,7 @@ export default function Dashboard({ user, onLogout }: Props) {
                   <select
                     value={sortOrder}
                     onChange={(e) => setSortOrder(e.target.value as "desc" | "asc")}
-                    className="rounded-lg border border-ink-100 px-2 py-1.5 text-sm text-ink-700"
+                    className="rounded-lg border border-ink-100 bg-white px-2 py-1.5 text-sm text-ink-700"
                   >
                     <option value="desc">Newest first</option>
                     <option value="asc">Oldest first</option>
@@ -270,6 +273,8 @@ export default function Dashboard({ user, onLogout }: Props) {
                 }}
               />
             )}
+
+            {tab === "settings" && <ChangePasswordForm />}
           </div>
 
           <div className="rounded-card border border-ink-100 bg-white p-4">

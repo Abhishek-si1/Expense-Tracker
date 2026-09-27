@@ -2,8 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Light theme — warm paper background, soft ink text */
+  --color-paper: 247 244 237;       /* #F7F4ED */
+  --color-surface: 255 255 255;     /* #FFFFFF card bg */
+  --color-ink-50: 240 241 245;      /* #F0F1F5 */
+  --color-ink-100: 218 222 231;     /* #DADEE7 */
+  --color-ink-400: 92 103 133;      /* #5C6785 */
+  --color-ink-600: 47 58 90;        /* #2F3A5A */
+  --color-ink-700: 30 39 64;        /* #1E2740 */
+  --color-ink-900: 20 25 43;        /* #14192B */
+  --color-ledger-green: 47 111 78;       /* #2F6F4E */
+  --color-ledger-green-soft: 228 238 231; /* #E4EEE7 */
+  --color-ledger-rust: 180 67 47;        /* #B4432F */
+  --color-ledger-rust-soft: 244 229 225;  /* #F4E5E1 */
+}
+
+.dark {
+  /* Dark theme — calm slate background, muted contrast (no pure black/white) */
+  --color-paper: 24 26 33;          /* #181A21 */
+  --color-surface: 32 34 43;        /* #20222B card bg */
+  --color-ink-50: 42 45 56;         /* #2A2D38 hover/subtle bg */
+  --color-ink-100: 52 56 70;        /* #343846 borders */
+  --color-ink-400: 148 153 173;     /* #9499AD muted text */
+  --color-ink-600: 197 201 216;     /* #C5C9D8 secondary text */
+  --color-ink-700: 216 219 230;     /* #D8DBE6 */
+  --color-ink-900: 236 238 244;     /* #ECEEF4 headings/primary text */
+  --color-ledger-green: 108 191 148;      /* #6CBF94 */
+  --color-ledger-green-soft: 32 51 43;    /* #20332B */
+  --color-ledger-rust: 224 138 115;       /* #E08A73 */
+  --color-ledger-rust-soft: 54 36 32;     /* #362420 */
+}
+
 body {
-  @apply bg-paper text-ink-900 font-sans antialiased;
+  @apply bg-paper text-ink-900 font-sans antialiased transition-colors duration-200;
 }
 
 .tabular {

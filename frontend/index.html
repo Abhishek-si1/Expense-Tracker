@@ -10,6 +10,16 @@
       rel="stylesheet"
     />
     <title>Expense Tracker</title>
+    <script>
+      // Apply the saved theme before paint to avoid a light/dark flash on load
+      (function () {
+        var stored = localStorage.getItem("theme");
+        var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (stored === "dark" || (!stored && prefersDark)) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

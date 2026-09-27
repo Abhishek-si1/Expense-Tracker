@@ -22,11 +22,15 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// If the token is invalid/expired, clear it and force back to the login screen
+// Only these two messages mean "your session token itself is invalid" —
+// other 401s (wrong current password, wrong security answers) must NOT log the user out.
+const SESSION_INVALID_MESSAGES = ["Not authenticated", "Invalid or expired token"];
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error?.response?.status === 401) {
+    const message = error?.response?.data?.error;
+    if (error?.response?.status === 401 && SESSION_INVALID_MESSAGES.includes(message)) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.location.reload();
@@ -42,8 +46,35 @@ export interface AuthUser {
   name?: string | null;
 }
 
-export const signup = (data: { email: string; password: string; name?: string }) =>
-  api.post<{ token: string; user: AuthUser }>("/auth/signup", data).then((r) => r.data);
+export interface SecurityQuestionInput {
+  question: string;
+  answer: string;
+}
+
+export const signup = (data: {
+  email: string;
+  password: string;
+  name?: string;
+  securityQuestions: SecurityQuestionInput[];
+}) => api.post<{ token: string; user: AuthUser }>("/auth/signup", data).then((r) => r.data);
+
+export const changePassword = (data: { currentPassword: string; newPassword: string }) =>
+  api.put<{ success: true }>("/auth/change-password", data).then((r) => r.data);
+
+export const getSecurityQuestions = (email: string) =>
+  api
+    .post<{ questions: { id: string; question: string }[] }>("/auth/forgot-password/questions", {
+      email,
+    })
+    .then((r) => r.data);
+
+export const verifySecurityAnswers = (data: {
+  email: string;
+  answers: { questionId: string; answer: string }[];
+}) => api.post<{ resetToken: string }>("/auth/forgot-password/verify", data).then((r) => r.data);
+
+export const resetPassword = (data: { resetToken: string; newPassword: string }) =>
+  api.post<{ success: true }>("/auth/reset-password", data).then((r) => r.data);
 
 export const login = (data: { email: string; password: string }) =>
   api.post<{ token: string; user: AuthUser }>("/auth/login", data).then((r) => r.data);

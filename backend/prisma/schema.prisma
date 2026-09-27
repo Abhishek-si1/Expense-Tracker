@@ -13,14 +13,27 @@ enum TransactionType {
 }
 
 model User {
-  id           String        @id @default(cuid())
-  email        String        @unique
-  passwordHash String
-  name         String?
-  createdAt    DateTime      @default(now())
-  categories   Category[]
-  transactions Transaction[]
-  budgets      Budget[]
+  id                String             @id @default(cuid())
+  email             String             @unique
+  passwordHash      String
+  name              String?
+  createdAt         DateTime           @default(now())
+  categories        Category[]
+  transactions      Transaction[]
+  budgets           Budget[]
+  securityQuestions SecurityQuestion[]
+}
+
+model SecurityQuestion {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question   String
+  answerHash String
+  order      Int
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, order])
 }
 
 model Category {
